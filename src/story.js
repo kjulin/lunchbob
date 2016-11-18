@@ -83,17 +83,21 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     };
 
     const recommendPlaces = (context) => {
-      return newMessage()
-        .then(() => getVenues(context.location.lat, context.location.long))
-        .then(restaurants => {
-          return addGenericTemplate(restaurants.map(restaurant => {
-            return {
-              title: restaurant.name,
-              subtitle: restaurant.post_address
-            }
-          }))
+      return getVenues(context.location.lat, context.location.long)
+        .then(res => {
+          console.log(res)
+          return res
         })
-        .then(sendMessage);
+        .then(restaurants => {
+          return newMessage()
+            .then(addGenericTemplate(restaurants.map(restaurant => {
+              return {
+                title: restaurant.name,
+                subtitle: restaurant.post_address
+              }
+            }))
+            .then(sendMessage)
+        })
     }
 
     const userSharesLocation = () => messagingEvent.message && messagingEvent.message.attachments;
