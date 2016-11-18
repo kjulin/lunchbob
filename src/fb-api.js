@@ -13,7 +13,8 @@ module.exports = apiConf => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(messageObject)
-      });
+      })
+      .catch(console.log);
   };
 
   return api;

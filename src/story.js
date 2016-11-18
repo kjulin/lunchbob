@@ -90,7 +90,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         })
         .then(restaurants => {
           return newMessage()
-            .then(() => {
+            /*.then(() => {
               const items = restaurants.map(restaurant => {
                 return {
                   title: restaurant.name,
@@ -99,7 +99,11 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
               })
               console.log(items)
               return addGenericTemplate(items)
-            })
+            })*/
+            .then(addGenericTemplate([{
+              title: 'Heres your reply',
+              subtitle: 'Have some lunch'
+            }]))
             .then(sendMessage)
         })
     }
