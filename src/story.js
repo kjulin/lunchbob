@@ -8,13 +8,6 @@ import {
   addImage
 } from './fb-message-builder';
 
-import {
-  messageIs,
-  hasPostback,
-  userSays,
-  getUserMessage
-} from './fb-message-parser'
-
 import {getVenues} from './smartum-api'
 
 const sessions = {};
@@ -31,6 +24,33 @@ const resetSession = (userId) => {
 
 export default function storyRunner(sendMessage, getContextForUser = getSession, resetContextForUser = resetSession, getCurrentDate = () => new Date()) {
   return function runStory(messagingEvent) {
+
+    const messageIs = text => {
+      if (messagingEvent.message && messagingEvent.message.text) {
+        return messagingEvent.message.text.toLowerCase() === text.toLowerCase();
+      }
+    };
+
+    const hasPostback = payload => {
+      return messagingEvent.postback && messagingEvent.postback.payload === payload;
+    };
+
+    const userSays = (...keywords) => keywords.some(word => messageIs(word) || hasPostback(word));
+
+    const getUserMessage = () => {
+      if (messagingEvent.message && messagingEvent.message.text) {
+        return messagingEvent.message.text.toLowerCase();
+      }
+
+      if (messagingEvent.postback) {
+        return messagingEvent.postback.payload.toLowerCase();
+      }
+
+      if (messagingEvent.message && messagingEvent.message.attachments) {
+        const locationAttachment = messagingEvent.message.attachments[0];
+        return locationAttachment.payload.coordinates;
+      }
+    };
 
     const newMessage = () => {
       return message(messagingEvent.sender.id);
