@@ -90,12 +90,15 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         })
         .then(restaurants => {
           return newMessage()
-            .then(addGenericTemplate(restaurants.map(restaurant => {
+            .then(() => {
+              const items = restaurants.map(restaurant => {
               return {
                 title: restaurant.name,
-                subtitle: restaurant.post_address
+                subtitle: restaurant.post_address.street_address
               }
-            })))
+            })
+              console.log(items)
+              return addGenericTemplate(items))
             .then(sendMessage)
         })
     }
