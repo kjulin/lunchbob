@@ -92,7 +92,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
               subtitle: restaurant.post_address
             }
           }))
-        });
+        })
+        .then(sendMessage);
     }
 
     const userSharesLocation = () => messagingEvent.message && messagingEvent.message.attachments;
