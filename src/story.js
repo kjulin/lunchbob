@@ -84,7 +84,10 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
     const recommendPlaces = (context) => {
       return newMessage()
-        .then(getVenues(context.location.lat, context.location.lon))
+        .then(() => {
+          console.log(context)
+          return getVenues(context.location.lat, context.location.lon)
+        })
         .then(restaurants => {
           return addGenericTemplate(restaurants.map(restaurant => {
             return {
