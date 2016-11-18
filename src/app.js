@@ -1,25 +1,23 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import configureApi from './fb-api';
-import expressWinston from 'express-winston';
-import winston from 'winston';
-import storyRunner from './story';
+import express from 'express'
+import bodyParser from 'body-parser'
+import configureApi from './fb-api'
+import expressWinston from 'express-winston'
+import winston from 'winston'
+import storyRunner from './story'
 
 export default (configuration, logRequests) => {
-
-  const fbAccessToken = configuration.access_token;
-
+  const fbAccessToken = configuration.access_token
   const fbApi = configureApi({
     access_token: fbAccessToken
-  });
+  })
 
-  const app = express();
-  app.use(bodyParser.json());
+  const app = express()
+  app.use(bodyParser.json())
 
-  const runStory = storyRunner(fbApi.sendMessage);
+  const runStory = storyRunner(fbApi.sendMessage)
 
   if (logRequests) {
-    expressWinston.requestWhitelist.push('body');
+    expressWinston.requestWhitelist.push('body')
     app.use(expressWinston.logger({
       transports: [
         new winston.transports.Console({
@@ -27,27 +25,27 @@ export default (configuration, logRequests) => {
           colorize: true
         })
       ]
-    }));
+    }))
   }
 
   app.get('/webhook', (req, res) => {
     if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === configuration.verification_token) {
-      res.send(req.query['hub.challenge']);
+      res.send(req.query['hub.challenge'])
     } else {
-      res.sendStatus(403);
+      res.sendStatus(403)
     }
-  });
+  })
 
   app.post('/webhook', (req, res) => {
     if (req.body.entry) {
       req.body.entry.map(pageEntry => pageEntry.messaging)
         .reduce((a, b) => a.concat(b), [])
         .filter(messagingEvent => messagingEvent.message || messagingEvent.postback)
-        .forEach(messagingEvent => runStory(messagingEvent));
+        .forEach(messagingEvent => runStory(messagingEvent))
     }
 
-    res.sendStatus(200);
-  });
+    res.sendStatus(200)
+  })
 
-  return app;
-};
+  return app
+}

@@ -15,6 +15,8 @@ import {
   getUserMessage
 } from './fb-message-parser'
 
+import {getVenues} from './smartum-api'
+
 const sessions = {};
 const getSession = (userId) => {
   if (!sessions[userId]) {
@@ -62,7 +64,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
     const recommendPlaces = (context) => {
       return newMessage()
-        .then()
+        .then(getVenues(context.location.lat, context.location.lon))
         .then(restaurants => {
           return addGenericTemplate(restaurants.map(restaurant => {
             return {
