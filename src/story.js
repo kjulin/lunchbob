@@ -83,7 +83,10 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     };
 
     const recommendPlaces = (context) => {
-      return getVenues(context.location.lat, context.location.long)
+      return newMessage()
+        .then(addText('Thanks! How about one of these?'))
+        .then(sendMessage)
+        .then(getVenues(context.location.lat, context.location.long))
         .then(res => {
           console.log(res)
           return res
@@ -95,7 +98,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
               subtitle: restaurant.post_address.street_address
             }
           })
-          
+
           return newMessage()
             .then(addGenericTemplate(items))
             .then(sendMessage)
