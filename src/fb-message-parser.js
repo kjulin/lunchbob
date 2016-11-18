@@ -25,7 +25,7 @@ const getUserMessage = () => {
   }
 };
 
-export default {
+export {
   messageIs,
   hasPostback,
   userSays,
