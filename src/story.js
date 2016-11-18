@@ -86,7 +86,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       return newMessage()
         .then(addText('Thanks! How about one of these?'))
         .then(sendMessage)
-        .then(getVenues(context.location.lat, context.location.long))
+        .then(() => getVenues(context.location.lat, context.location.long))
         .then(res => {
           console.log(res)
           return res
