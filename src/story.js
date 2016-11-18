@@ -95,7 +95,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
                 title: restaurant.name,
                 subtitle: restaurant.post_address
               }
-            }))
+            })))
             .then(sendMessage)
         })
     }
