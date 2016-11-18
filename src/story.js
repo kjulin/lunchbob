@@ -92,13 +92,14 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
           return newMessage()
             .then(() => {
               const items = restaurants.map(restaurant => {
-              return {
-                title: restaurant.name,
-                subtitle: restaurant.post_address.street_address
-              }
-            })
+                return {
+                  title: restaurant.name,
+                  subtitle: restaurant.post_address.street_address
+                }
+              })
               console.log(items)
-              return addGenericTemplate(items))
+              return addGenericTemplate(items)
+            })
             .then(sendMessage)
         })
     }
