@@ -8,6 +8,13 @@ import {
   addImage
 } from './fb-message-builder';
 
+import {
+  messageIs,
+  hasPostback,
+  userSays,
+  getUserMessage
+} from './fb-message-parser'
+
 const sessions = {};
 const getSession = (userId) => {
   if (!sessions[userId]) {
@@ -22,33 +29,6 @@ const resetSession = (userId) => {
 
 export default function storyRunner(sendMessage, getContextForUser = getSession, resetContextForUser = resetSession, getCurrentDate = () => new Date()) {
   return function runStory(messagingEvent) {
-
-    const messageIs = text => {
-      if (messagingEvent.message && messagingEvent.message.text) {
-        return messagingEvent.message.text.toLowerCase() === text.toLowerCase();
-      }
-    };
-
-    const hasPostback = payload => {
-      return messagingEvent.postback && messagingEvent.postback.payload === payload;
-    };
-
-    const userSays = (...keywords) => keywords.some(word => messageIs(word) || hasPostback(word));
-
-    const getUserMessage = () => {
-      if (messagingEvent.message && messagingEvent.message.text) {
-        return messagingEvent.message.text.toLowerCase();
-      }
-
-      if (messagingEvent.postback) {
-        return messagingEvent.postback.payload.toLowerCase();
-      }
-
-      if(messagingEvent.message && messagingEvent.message.attachments) {
-        const locationAttachment = messagingEvent.message.attachments[0];
-        return locationAttachment.payload.coordinates;
-      }
-    };
 
     const newMessage = () => {
       return message(messagingEvent.sender.id);
@@ -67,8 +47,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         .then(sendMessage);
     };
 
-
-    const askStartLocation = () => {
+    const askLocation = () => {
       return newMessage()
         .then(addText('What is your location'))
         .then(sendMessage)
@@ -81,59 +60,20 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         .then(sendMessage);
     };
 
-    const locationElement = (location) => {
-      const postbackPayload = {
-        type: 'location',
-        location: {
-          lat: location.lat,
-          long: location.lon
-        }
-      };
-      const image_url = `https://maps.googleapis.com/maps/api/staticmap?size=764x400&center=${location.lat},${location.lon}&zoom=15&markers=${location.lat},${location.lon}`;
-      return {
-        title: location.formattedAddress,
-        subtitle: 'Your location',
-        image_url,
-        item_url: `http://maps.apple.com/maps?q=${location.lat},${location.lon}&z=15`,
-        buttons: [{
-          title: 'Use this',
-          type: 'postback',
-          payload: JSON.stringify(postbackPayload)
-        }]
-      };
-    };
-
-    const resolveLocation = (typedAddress) => {
-      return locationFromAddress(typedAddress)
-          .then(response => {
-          if (response.success) {
-        const locationElements = response.locations.map(locationElement);
-        return newMessage()
-          .then(addGenericTemplate(locationElements))
-          .then(sendMessage);
-      } else {
-        return newMessage()
-          .then(addText('I could not find any location that matches the given address. Please try again or share your location.'))
-          .then(addShareLocation())
-          .then(sendMessage);
-      }
-    });
-    };
-
+    const recommendPlaces = (context) => {
+      return newMessage()
+        .then()
+        .then(restaurants => {
+          return addGenericTemplate(restaurants.map(restaurant => {
+            return {
+              title: restaurant.name,
+              subtitle: restaurant.post_address
+            }
+          }))
+        });
+    }
 
     const userSharesLocation = () => messagingEvent.message && messagingEvent.message.attachments;
-
-
-    const userSelectsLocation = () => {
-      if (!messagingEvent.postback) return false;
-      const payload = JSON.parse(messagingEvent.postback.payload);
-      return payload && payload.type == 'location';
-    };
-
-    const getSelectedLocation = () => {
-      const payload = JSON.parse(messagingEvent.postback.payload);
-      return payload.location;
-    };
 
     const context = getContextForUser(messagingEvent.sender.id);
 
@@ -142,12 +82,12 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       context.greeted = true;
     }
     else if (userSays('Let\'s start!', 'Start')) context.started = true;
-    else if (userSharesLocation()) context.startLocation = getUserMessage();
+    else if (userSharesLocation()) context.location = getUserMessage();
     else if (userSays('reset')) resetContextForUser();
-    else if (context.resolveLocationFor && userSelectsLocation()) context.startLocation = getSelectedLocation();
     else return unknownCommand();
 
-    if(context.greeted && !context.started) return greet();
-    else return askStartLocation()
+    if (context.greeted && !context.started) return greet();
+    else if (context.started && !context.location) return askLocation()
+    else if (context.started && context.location) return recommendPlaces(context)
   };
 }
