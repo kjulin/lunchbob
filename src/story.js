@@ -103,6 +103,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
             .then(addGenericTemplate(items))
             .then(sendMessage)
         })
+        .then(newMessage)
+        .then(addQuickReplies('Nope, more!'))
     }
 
     const userSharesLocation = () => messagingEvent.message && messagingEvent.message.attachments;
@@ -115,6 +117,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     }
     else if (userSays('Let\'s start!', 'Start')) context.started = true;
     else if (userSharesLocation()) context.location = getUserMessage();
+    else if (userSays('Nope, more!')) context.nextRound = true
     else if (userSays('reset')) resetContextForUser();
     else return unknownCommand();
 
