@@ -16,7 +16,7 @@ export default configuration => {
   })
 
   const getContext = (userId) => {
-    return contexts.findOne({userId})
+    return contexts.findOne({userId}).then(res => res || {})
   };
 
   const saveContext = (userId, context) => {
