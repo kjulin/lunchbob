@@ -131,7 +131,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     else if (userSays('Let\'s start!', 'Start')) context.started = true;
     else if (userSharesLocation()) context.location = getUserMessage();
     else if (userSays('Hit me with random 3')) context.hitIndex = 0
-    else if (userSays('Nope, hit 3 more') context.hitIndex = context.hitIndex+1
+    else if (userSays('Nope, hit 3 more')) context.hitIndex = context.hitIndex+1
     else if (userSays('reset')) resetContextForUser();
     else return unknownCommand();
 
