@@ -125,8 +125,11 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
         id: restaurant.id
       }
 
+      const keywords = restaurant.categories.map(category => category[0]).join(", ")
+
       const card = {
         title: restaurant.name,
+        subtitle: keywords,
         image_url: processImageUrl(restaurant.image_url),
         item_url: restaurant.url
       }
@@ -199,7 +202,7 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
     else if (userSays('Nope, hit 3 more!')) {
       if (context.hitIndex < 2) context.hitIndex = context.hitIndex + 1
       else {
-        context.selected = context.results.restaurants[randomIndex(context.results.restaurants)]
+        context.selected = context.results.restaurants[randomIndex(context.results.restaurants.length)]
         context.final = true
       }
     }
