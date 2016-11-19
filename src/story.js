@@ -138,7 +138,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       if (allowSelect) {
         card.buttons = [{
           type: 'postback',
-          title: '\u1F44D',
+          title: '\uF44D',
           payload: JSON.stringify(payload)
         }]
       }
