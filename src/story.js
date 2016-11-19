@@ -97,6 +97,20 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         })
     }
 
+    const restaurantSetFor = context => {
+      const items = context.results.restaurants.slice(0, 3).map(restaurant => {
+        return {
+          title: restaurant.name,
+          subtitle: restaurant.snippet_text,
+          image_url: restaurant.image_url,
+          site_url: restaurant.url
+        }
+      })
+
+      console.log(items)
+      return items;
+    }
+
     const showRestaurants = context => {
       return newMessage()
         .then(addText('Sure. Here are three restaurant that you might wanna try'))
@@ -106,18 +120,6 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         .then(sendMessage)
         .catch(console.log)
     }
-
-    const restaurantSetFor = context => {
-      return context.results.restaurants.slice(0, 3).map(restaurant => {
-        return {
-          title: restaurant.name,
-          subtitle: restaurant.snippet_text,
-          image_url: restaurant.image_url,
-          site_url: restaurant.url
-        }
-      })
-    }
-
 
     const context = getContextForUser(messagingEvent.sender.id);
 
