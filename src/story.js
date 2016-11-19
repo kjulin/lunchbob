@@ -147,7 +147,9 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     }
 
     const processImageUrl = url => {
-      return url.substring(0, url.length - 3) + 'l.png'
+      const processed = url.substring(0, url.length - 2) + 'l.png'
+      console.log(processed)
+      return processed
     }
 
     const showRestaurants = context => {
