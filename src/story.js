@@ -117,10 +117,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         .then(sendMessage)
         .then(newMessage)
         .then(addGenericTemplate(restaurantSet))
-        .then(res => {
-          console.log(JSON.stringify(res))
-          return res
-        })
+        .then(addQuickReplies(['Nope, hit 3 more']))
         .then(sendMessage)
         .catch(console.log)
     }
@@ -133,10 +130,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     }
     else if (userSays('Let\'s start!', 'Start')) context.started = true;
     else if (userSharesLocation()) context.location = getUserMessage();
-    else if (userSays('Hit me with random 3')) {
-      if(!context.hitIndex) context.hitIndex = 0
-      else context.hitIndex = context.hitIndex + 1
-    }
+    else if (userSays('Hit me with random 3')) context.hitIndex = 0
+    else if (userSays('Nope, hit 3 more') context.hitIndex = context.hitIndex+1
     else if (userSays('reset')) resetContextForUser();
     else return unknownCommand();
 

@@ -14,7 +14,7 @@ module.exports = apiConf => {
         },
         body: JSON.stringify(messageObject)
       })
-      .then(console.log)
+      .then(res => res.text.then(console.log))
       .catch(console.log);
   };
 
