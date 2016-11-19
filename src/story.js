@@ -8,9 +8,6 @@ import {
   addImage
 } from './fb-message-builder';
 
-import {getVenues} from './smartum-api'
-import {searchRestaurants} from './yelp-api'
-
 const sessions = {};
 const getSession = (userId) => {
   if (!sessions[userId]) {
@@ -23,7 +20,7 @@ const resetSession = (userId) => {
   sessions[userId] = {};
 };
 
-export default function storyRunner(sendMessage, getContextForUser = getSession, resetContextForUser = resetSession, getCurrentDate = () => new Date()) {
+export default function storyRunner(sendMessage, searchRestaurants, getContextForUser = getSession, resetContextForUser = resetSession, getCurrentDate = () => new Date()) {
   return function runStory(messagingEvent) {
 
     const messageIs = text => {

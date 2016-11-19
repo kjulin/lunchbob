@@ -1,8 +1,13 @@
+require('dotenv').config({silent: true})
 import createApp from './src/app';
 
 const configuration = {
   verification_token: process.env.VERIFICATION_TOKEN,
-  access_token: process.env.ACCESS_TOKEN
+  access_token: process.env.ACCESS_TOKEN,
+  yelp_consumer_key: process.env.YELP_CONSUMER_KEY,
+  yelp_consumer_secret: process.env.YELP_CONSUMER_SECRET,
+  yelp_token: process.env.YELP_TOKEN,
+  yelp_token_secret: process.env.YELP_TOKEN_SECRET
 };
 
 const logRequests = true;

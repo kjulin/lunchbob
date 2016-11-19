@@ -23,6 +23,7 @@
     "winston": "^2.2.0"
   },
   "devDependencies": {
+    "dotenv": "^2.0.0",
     "nodemon": "^1.10.2"
   }
 }

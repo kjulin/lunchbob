@@ -5,18 +5,17 @@ import expressWinston from 'express-winston'
 import winston from 'winston'
 import storyRunner from './story'
 
-import {searchRestaurants} from './yelp-api'
+import configureYelp from './yelp-api'
 
 export default (configuration, logRequests) => {
-  const fbAccessToken = configuration.access_token
-  const fbApi = configureApi({
-    access_token: fbAccessToken
-  })
+
+  const fbApi = configureApi({access_token: configuration.access_token})
+  const yelpApi = configureYelp(configuration)
 
   const app = express()
   app.use(bodyParser.json())
 
-  const runStory = storyRunner(fbApi.sendMessage)
+  const runStory = storyRunner(fbApi.sendMessage, yelpApi.searchRestaurants)
 
   if (logRequests) {
     expressWinston.requestWhitelist.push('body')
