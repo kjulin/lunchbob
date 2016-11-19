@@ -184,6 +184,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         .then(sendMessage)
         .then(newMessage)
         .then(addText('Hope this helps! Just call me when you want great recommendations again!'))
+        .then(sendMessage)
         .catch(console.log)
     }
 
