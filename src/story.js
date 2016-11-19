@@ -94,6 +94,7 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
       return searchRestaurants(context.location.lat, context.location.long)
         .then(results => {
           context.results = results
+          context.original = results
           return newMessage()
             .then(addText(`Awesome! I just found ${results.total} places that server lunch within 1,0km from your location.`))
             .then(sendMessage)
@@ -127,6 +128,8 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
       }
 
       const keywords = restaurant.categories.map(category => category[0]).join(", ")
+
+      const subtitle = `${restaurant.location.display_address}\nStyle: ${keywords}\nRating: ${restaurant.rating}`
 
       const card = {
         title: restaurant.name,
@@ -173,7 +176,7 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
 
       if (context.final) {
         message
-          .then(addText('Come on dude, I took the liberty to choose!'))
+          .then(addText('Come on human, I took the liberty to choose!'))
       }
       else {
         message
@@ -209,7 +212,7 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
     }
     else if (matchJsonPayload(payload => payload.type === 'RESTAURANT_SELECT')) {
       const id = jsonPayload().id
-      context.selected = context.results.restaurants.find(restaurant => restaurant.id === id)
+      context.selected = context.original.restaurants.find(restaurant => restaurant.id === id)
     }
     else if (userSays('reset')) resetContextForUser();
     else return unknownCommand();
