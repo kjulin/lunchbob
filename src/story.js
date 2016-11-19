@@ -104,15 +104,16 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
         })
     }
 
-    const randomIndex = max => {
-      return parseInt(Math.random() * max)
+    const pickRandom = array => {
+      const index = parseInt(Math.random() * array.length)
+      const picked = array[index]
+      array.splice(index, 1)
+      return picked
     }
 
     const restaurantSetFor = context => {
 
-      const indexes = Array(3).fill(null).map(_ => randomIndex(context.results.restaurants.length))
-      const selected = indexes.map(index => context.results.restaurants[index])
-      indexes.map(index => context.results.restaurants.splice(index, 1))
+      const selected = Array(3).fill(null).map(_ => pickRandom(context.results.restaurants))
 
       const items = selected.map(restaurant => mapRestaurant(restaurant, true))
       return items;
@@ -202,7 +203,7 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
     else if (userSays('Nope, hit 3 more!')) {
       if (context.hitIndex < 2) context.hitIndex = context.hitIndex + 1
       else {
-        context.selected = context.results.restaurants[randomIndex(context.results.restaurants.length)]
+        context.selected = pickRandom(context.results.restaurants)
         context.final = true
       }
     }
