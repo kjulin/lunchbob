@@ -147,7 +147,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     }
 
     const processImageUrl = url => {
-      const processed = url.substring(0, url.length - 2) + 'l.png'
+      const processed = url.substring(0, url.length - 6) + 'l.jpg'
       console.log(processed)
       return processed
     }
