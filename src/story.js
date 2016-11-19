@@ -140,7 +140,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
       return newMessage()
         .then(addText('Come on dude, time to eat! Here is your place:'))
-        .then(addGenericTemplate([restaurant]))
+        //.then(addGenericTemplate([restaurant]))
         .then(sendMessage)
         .catch(console.log)
     }
