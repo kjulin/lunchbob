@@ -131,7 +131,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
       const card = {
         title: restaurant.name,
-        image_url: restaurant.image_url,
+        image_url: processImageUrl(restaurant.image_url),
         item_url: restaurant.url
       }
 
@@ -144,6 +144,10 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       }
 
       return card
+    }
+
+    const processImageUrl = url => {
+      return url.substring(0, url.length - 3) + 'l.png'
     }
 
     const showRestaurants = context => {
