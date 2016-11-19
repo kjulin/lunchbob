@@ -104,6 +104,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         .then(newMessage)
         .then(addGenericTemplate(restaurantSetFor(context)))
         .then(sendMessage)
+        .catch(console.log)
     }
 
     const restaurantSetFor = context => {
