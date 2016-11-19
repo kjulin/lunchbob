@@ -114,7 +114,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     const restaurantSetFor = context => {
 
       const restaurants = context.results.restaurants
-      const indexes = Array(3).fill(_ => randomIndex(restaurants))
+      const indexes = Array(3).fill(null).map(_ => randomIndex(restaurants))
       const selected = indexes.map(index => restaurants[index])
       indexes.map(index => context.results.restaurants.splice(index, 1))
 
