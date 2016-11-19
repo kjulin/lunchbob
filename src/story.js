@@ -106,17 +106,22 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
           site_url: restaurant.url
         }
       })
-
-      console.log(items)
       return items;
     }
 
     const showRestaurants = context => {
+
+      const restaurantSet = restaurantSetFor(context)
+
       return newMessage()
-        .then(addText('Sure. Here are three restaurant that you might wanna try'))
+        .then(addText('Sure. Here is three restaurants that you might wanna try'))
         .then(sendMessage)
         .then(newMessage)
-        .then(addGenericTemplate(restaurantSetFor(context)))
+        .then(addGenericTemplate(restaurantSet))
+        .then(res => {
+          console.log(res)
+          return res
+        })
         .then(sendMessage)
         .catch(console.log)
     }
