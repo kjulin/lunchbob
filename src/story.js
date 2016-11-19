@@ -121,7 +121,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         end = restaurants.length
       }
 
-      const items = context.results.restaurants.slice(start, end).map(mapRestaurant)
+      const items = context.results.restaurants.slice(start, end).map(restaurant => mapRestaurant(restaurant, true))
       return items;
     }
 
@@ -129,7 +129,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
       const payload = {
         type: 'RESTAURANT_SELECT',
-        restaurant
+        id: restaurant.id
       }
 
       const card = {
@@ -203,7 +203,10 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         context.final = true
       }
     }
-    else if(matchJsonPayload(payload => payload.type === 'RESTAURANT_SELECT')) context.selected = jsonPayload().restaurant
+    else if(matchJsonPayload(payload => payload.type === 'RESTAURANT_SELECT')) {
+      const id = jsonPayload().id
+      context.selected = context.results.restaurants.find(restaurant => restaurant.id === id)
+    }
     else if (userSays('reset')) resetContextForUser();
     else return unknownCommand();
 
