@@ -99,6 +99,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
           context.results = results
           return newMessage()
             .then(addText(`Awesome! I just found ${results.total} places that server lunch within 1,0km from your location.`))
+            .then(sendMessage)
+            .then(newMessage)
             .then(addText(`So far I can only give you some random recommendations.`))
             .then(addQuickReplies(['Just hit me up!']))
             .then(sendMessage)
@@ -136,7 +138,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       if (allowSelect) {
         card.buttons = [{
           type: 'postback',
-          title: '(y)',
+          title: '\u1F44D',
           payload: JSON.stringify(payload)
         }]
       }
@@ -171,10 +173,11 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         message
           .then(addText('Awesome! Hope you enjoy!'))
       }
-      message
-        .then(addText('Protip: You can invite friends using the share button next to the card.'))
+
+      message.then(sendMessage).then(newMessage)
 
       return message
+        .then(addText('Protip: You can invite friends using the share button next to the card.'))
         .then(sendMessage)
         .then(newMessage)
         .then(addGenericTemplate([restaurant]))
