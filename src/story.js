@@ -131,6 +131,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     else if (userSays('reset')) resetContextForUser();
     else return unknownCommand();
 
+    console.log('Context', context)
+
     if (context.greeted && !context.started) return greet();
     else if (context.started && !context.location) return askLocation()
     else if (context.location && !context.results) return loadPlaces(context)
