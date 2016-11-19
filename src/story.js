@@ -94,7 +94,7 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
       return searchRestaurants(context.location.lat, context.location.long)
         .then(results => {
           context.results = results
-          context.original = results
+          context.original = results.restaurants.map(res => res)
           return newMessage()
             .then(addText(`Awesome! I just found ${results.total} places that server lunch within 1,0km from your location.`))
             .then(sendMessage)
@@ -212,7 +212,7 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
     }
     else if (matchJsonPayload(payload => payload.type === 'RESTAURANT_SELECT')) {
       const id = jsonPayload().id
-      context.selected = context.original.restaurants.find(restaurant => restaurant.id === id)
+      context.selected = context.original.find(restaurant => restaurant.id === id)
     }
     else if (userSays('reset')) resetContextForUser();
     else return unknownCommand();
