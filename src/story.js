@@ -108,14 +108,16 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         end = restaurants.length
       }
 
-      const items = context.results.restaurants.slice(start, end).map(restaurant => {
-        return {
-          title: restaurant.name,
-          image_url: restaurant.image_url,
-          item_url: restaurant.url
-        }
-      })
+      const items = context.results.restaurants.slice(start, end).map(mapRestaurant)
       return items;
+    }
+
+    const mapRestaurant = restaurant => {
+      return {
+        title: restaurant.name,
+        image_url: restaurant.image_url,
+        item_url: restaurant.url
+      }
     }
 
     const showRestaurants = context => {
@@ -132,6 +134,15 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         .catch(console.log)
     }
 
+    const showFinalChoice = (context) => {
+
+      const restaurant = context.results.restaurants[context.results.restaurants.length -1]
+
+      return newMessage()
+        .then(addText('Come on dude, time to eat! Here is your place:'))
+        .then(addGenericTemplate([mapRestaurant(restaurant)]))
+    }
+
     const context = getContextForUser(messagingEvent.sender.id);
 
     if (userSays('hi', 'hello', 'get started', 'help', 'Get started')) {
@@ -141,7 +152,10 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     else if (userSays('Let\'s start!', 'Start')) context.started = true;
     else if (userSharesLocation()) context.location = getUserMessage();
     else if (userSays('Hit me with random 3')) context.hitIndex = 0
-    else if (userSays('Nope, hit 3 more')) context.hitIndex = context.hitIndex+1
+    else if (userSays('Nope, hit 3 more')) {
+      if(context.hitIndex < 3) context.hitIndex = context.hitIndex+1
+      else context.final = true
+    }
     else if (userSays('reset')) resetContextForUser();
     else return unknownCommand();
 
@@ -150,6 +164,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     if (context.greeted && !context.started) return greet();
     else if (context.started && !context.location) return askLocation()
     else if (context.location && !context.results) return loadPlaces(context)
-    else if (context.results && context.hitIndex != null) return showRestaurants(context)
+    else if (context.results && context.hitIndex != null && !context.final) return showRestaurants(context)
+    else if (context.final) return showFinalChoice(context)
   };
 }
