@@ -136,12 +136,13 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
     const showFinalChoice = (context) => {
 
-      const restaurant = context.results.restaurants[context.results.restaurants.length -1]
+      const restaurant = mapRestaurant(context.results.restaurants[context.results.restaurants.length -1])
 
       return newMessage()
         .then(addText('Come on dude, time to eat! Here is your place:'))
-        .then(addGenericTemplate([mapRestaurant(restaurant)]))
+        .then(addGenericTemplate([restaurant]))
         .then(sendMessage)
+        .catch(console.log)
     }
 
     const context = getContextForUser(messagingEvent.sender.id);
