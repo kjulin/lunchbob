@@ -9,6 +9,7 @@ import {
 } from './fb-message-builder';
 
 import {getVenues} from './smartum-api'
+import {searchRestaurants} from './yelp-api'
 
 const sessions = {};
 const getSession = (userId) => {
@@ -52,6 +53,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       }
     };
 
+    const userSharesLocation = () => messagingEvent.message && messagingEvent.message.attachments;
+
     const newMessage = () => {
       return message(messagingEvent.sender.id);
     };
@@ -82,30 +85,36 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         .then(sendMessage);
     };
 
-    const recommendPlaces = (context) => {
-      return newMessage()
-        .then(addText('Thanks! How about one of these?'))
-        .then(sendMessage)
-        .then(() => getVenues(context.location.lat, context.location.long))
-        .then(res => {
-          console.log(res)
-          return res
-        })
-        .then(restaurants => {
-          const items = restaurants.map(restaurant => {
-            return {
-              title: restaurant.name,
-              subtitle: restaurant.post_address.street_address
-            }
-          })
+    const loadPlaces = (context) => {
 
+      return searchRestaurants(context.location.lat, context.location.long)
+        .then(results => {
+          context.results = results
           return newMessage()
-            .then(addGenericTemplate(items))
+            .then(addText(`I found ${results.total} places in 1km distance from you. How would you like to proceed?`))
+            .then(addQuickReplies(['Hit me with random 3']))
             .then(sendMessage)
         })
     }
 
-    const userSharesLocation = () => messagingEvent.message && messagingEvent.message.attachments;
+    const showRestaurants = context => {
+      return newMessage()
+        .then(addText('Sure. Here are three restaurant that you might wanna try'))
+        .then(addGenericTemplate(restaurantSetFor(context)))
+        .then(sendMessage)
+    }
+
+    const restaurantSetFor = context => {
+      return context.results.restaurants.slice(0, 3).map(restaurant => {
+        return {
+          title: restaurant.name,
+          subtitle: restaurant.snippet_text,
+          image_url: restaurant.image_url,
+          site_url: restaurant.url
+        }
+      })
+    }
+
 
     const context = getContextForUser(messagingEvent.sender.id);
 
@@ -115,11 +124,16 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     }
     else if (userSays('Let\'s start!', 'Start')) context.started = true;
     else if (userSharesLocation()) context.location = getUserMessage();
+    else if (userSays('Hit me with random 3')) {
+      if(!context.hitIndex) context.hitIndex = 0
+      else context.hitIndex = context.hitIndex + 1
+    }
     else if (userSays('reset')) resetContextForUser();
     else return unknownCommand();
 
     if (context.greeted && !context.started) return greet();
     else if (context.started && !context.location) return askLocation()
-    else if (context.started && context.location) return recommendPlaces(context)
+    else if (context.location && !context.results) return loadPlaces(context)
+    else if (context.results && context.hitIndex) return showRestaurants(context)
   };
 }

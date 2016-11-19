@@ -5,6 +5,8 @@ import expressWinston from 'express-winston'
 import winston from 'winston'
 import storyRunner from './story'
 
+import {searchRestaurants} from './yelp-api'
+
 export default (configuration, logRequests) => {
   const fbAccessToken = configuration.access_token
   const fbApi = configureApi({
