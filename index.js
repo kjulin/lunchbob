@@ -7,7 +7,8 @@ const configuration = {
   yelp_consumer_key: process.env.YELP_CONSUMER_KEY,
   yelp_consumer_secret: process.env.YELP_CONSUMER_SECRET,
   yelp_token: process.env.YELP_TOKEN,
-  yelp_token_secret: process.env.YELP_TOKEN_SECRET
+  yelp_token_secret: process.env.YELP_TOKEN_SECRET,
+  mongo_url: process.env.MONGO_URL
 };
 
 const logRequests = true;

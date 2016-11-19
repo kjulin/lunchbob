@@ -26,7 +26,7 @@ module.exports = configuration => {
   api.searchRestaurants = (lat, lon) => {
 
     const request = {
-      url: `${API_URL}?category_filter=restaurants&ll=${lat},${lon}&radius_filter=1000&limit=20`,
+      url: `${API_URL}?term=lunch&ll=${lat},${lon}&radius_filter=1000&limit=20`,
       method: 'GET'
     }
 
@@ -39,7 +39,6 @@ module.exports = configuration => {
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res)
         return {
           total: res.total,
           restaurants: res.businesses
