@@ -23,7 +23,7 @@ export const searchRestaurants = (lat, lon) => {
 
 
   const request = {
-    url: `${API_URL}?category_filter=restaurants&ll=${lat},${lon}&radius_filter=1000&limit=10`,
+    url: `${API_URL}?category_filter=restaurants&ll=${lat},${lon}&radius_filter=1000&limit=100`,
     method: 'GET'
   }
 
