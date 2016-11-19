@@ -40,6 +40,11 @@ export default configuration => {
         const selected = context.session.original.find(restaurant => restaurant.id === id)
         context.session.selected = processor.mapRestaurant(selected, context.location, false)
       }
+      else if(incomingMessage.userSays('change location')) {
+        context.session = null
+        context.location = null
+        context.changeLocation = true
+      }
       else if (incomingMessage.userSays('reset')) {
         context = {}
         context.started = true

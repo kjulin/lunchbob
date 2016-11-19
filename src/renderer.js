@@ -24,9 +24,14 @@ export default (messageBuilder) => {
         .then(sendMessage);
     };
 
-    const askLocation = () => {
-      return newMessage()
-        .then(messageBuilder.addText("Let's begin by figuring out your location so I can find lunch places close to you."))
+    const askLocation = (change = false) => {
+
+      let message = newMessage()
+
+      if(!change) message = message.then(messageBuilder.addText("Let's begin by figuring out your location so I can find lunch places close to you."))
+      else message = message.then(messageBuilder.addText("OK, just share your new location.\nProtip: your can move pin on the map to select other than current location."))
+
+      return message
         .then(messageBuilder.addShareLocation())
         .then(sendMessage)
     };
@@ -44,7 +49,7 @@ export default (messageBuilder) => {
 
       if(context.session.hitIndex == 0) {
         message = message
-          .then(messageBuilder.addText(`Awesome! I just found ${context.session.results.total} places that server lunch within 1,0km from your location.`))
+          .then(messageBuilder.addText(`Awesome! I just found ${context.session.results.total} places that serve lunch within 1,0km from your location.`))
           .then(sendMessage)
           .then(newMessage)
       }
@@ -91,7 +96,7 @@ export default (messageBuilder) => {
 
     if (context == null) return unknownCommand()
     else if (context.started && !context.greeted) return greet();
-    else if (context.greeted && !context.location) return askLocation()
+    else if (context.greeted && !context.location) return askLocation(context.changeLocation)
     else if (context.location && !context.session) return introReady(context)
     else if (context.session && !context.session.selected) return showRestaurants(context)
     else if (context.session && context.session.selected) showRestaurant(context)
