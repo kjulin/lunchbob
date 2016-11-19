@@ -101,9 +101,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       const items = context.results.restaurants.slice(0, 3).map(restaurant => {
         return {
           title: restaurant.name,
-          subtitle: restaurant.snippet_text,
           image_url: restaurant.image_url,
-          site_url: restaurant.url
+          item_url: restaurant.url
         }
       })
       return items;
