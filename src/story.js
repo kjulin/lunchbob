@@ -88,10 +88,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     const askLocation = () => {
       return newMessage()
         .then(addText("Let's begin by figuring out your location so I can find lunch places close to you."))
-        .then(sendMessage)
-        .then(newMessage)
         .then(addShareLocation())
-        .then(sendMessage);
+        .then(sendMessage)
     };
 
     const loadPlaces = (context) => {
