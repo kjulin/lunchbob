@@ -138,9 +138,13 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
       const restaurant = mapRestaurant(context.results.restaurants[context.results.restaurants.length -1])
 
+      console.log(restaurant)
+
       return newMessage()
         .then(addText('Come on dude, time to eat! Here is your place:'))
-        //.then(addGenericTemplate([restaurant]))
+        .then(sendMessage)
+        .then(newMessage)
+        .then(addGenericTemplate([restaurant]))
         .then(sendMessage)
         .catch(console.log)
     }
