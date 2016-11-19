@@ -98,7 +98,17 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     }
 
     const restaurantSetFor = context => {
-      const items = context.results.restaurants.slice(0, 3).map(restaurant => {
+
+      const restaurants = context.results.restaurants
+      let start = context.hitIndex * 3
+      let end = start + 3
+
+      if(end >= restaurants.length) {
+        start = restaurants.length - 3
+        end = restaurants.length
+      }
+
+      const items = context.results.restaurants.slice(start, end).map(restaurant => {
         return {
           title: restaurant.name,
           image_url: restaurant.image_url,
