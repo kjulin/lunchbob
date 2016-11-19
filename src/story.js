@@ -71,9 +71,15 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
 
     const greet = () => {
       return newMessage()
-        .then(addText("Hey human! It's me, LunchBob! My job is to help you take the weight off your shoulders when deciding the place to have lunch each day. Can I be of your assistance?"))
+        .then(addGenericTemplate([{
+          title: 'Hi human! My name is Bob the hungry pug. People also call me LunchBob.',
+          image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/hello.png'
+        }]))
+        .then(sendMessage)
+        .then(newMessage)
+        .then(addText('My job is to help you take the weight off your shoulders when deciding the place to have lunch each day. Let\'s begin, shall we?'))
         .then(addQuickReplies(['Yes please!']))
-        .then(sendMessage);
+        .then(sendMessage)
     };
 
     const unknownCommand = () => {
@@ -128,9 +134,10 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
       }
 
       const keywords = restaurant.categories.map(category => category[0]).join(", ")
+      const rating = Array(Math.floor(restaurant.rating)).fill("\u2B50").join("")
       const distance = restaurant.location.coordinate ? calculateDistance(context.location, restaurant.location.coordinate) : ""
 
-      const subtitle = `Style: ${keywords}\n\nRating: ${restaurant.rating}\nDistance: ${distance}m`
+      const subtitle = `Style: ${keywords}\n\nRating: ${rating}\nDistance: ${distance}m`
 
       const card = {
         title: restaurant.name,
