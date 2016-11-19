@@ -100,6 +100,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     const showRestaurants = context => {
       return newMessage()
         .then(addText('Sure. Here are three restaurant that you might wanna try'))
+        .then(sendMessage)
+        .then(newMessage)
         .then(addGenericTemplate(restaurantSetFor(context)))
         .then(sendMessage)
     }
