@@ -128,12 +128,13 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
       }
 
       const keywords = restaurant.categories.map(category => category[0]).join(", ")
+      const distance = restaurant.location.coordinate ? calcDistance(context.location, restaurant.location.coordinate) : ""
 
-      const subtitle = `${restaurant.location.display_address}\nStyle: ${keywords}\nRating: ${restaurant.rating}`
+      const subtitle = `Style:${keywords}\n\nRating: ${restaurant.rating}\nDistance: ${distance}`
 
       const card = {
         title: restaurant.name,
-        subtitle: keywords,
+        subtitle: subtitle,
         image_url: processImageUrl(restaurant.image_url),
         item_url: restaurant.url
       }
@@ -149,11 +150,11 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
       return card
     }
 
-    const processImageUrl = url => {
-      const processed = url.substring(0, url.length - 6) + 'l.jpg'
-      console.log(processed)
-      return processed
+    const calculateDistance = (location, restaurantLocation) => {
+
     }
+
+    const processImageUrl = url => url.substring(0, url.length - 6) + 'l.jpg'
 
     const showRestaurants = context => {
 
