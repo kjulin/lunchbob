@@ -141,6 +141,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       return newMessage()
         .then(addText('Come on dude, time to eat! Here is your place:'))
         .then(addGenericTemplate([mapRestaurant(restaurant)]))
+        .then(sendMessage)
     }
 
     const context = getContextForUser(messagingEvent.sender.id);
@@ -153,7 +154,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     else if (userSharesLocation()) context.location = getUserMessage();
     else if (userSays('Hit me with random 3')) context.hitIndex = 0
     else if (userSays('Nope, hit 3 more')) {
-      if(context.hitIndex < 3) context.hitIndex = context.hitIndex+1
+      if(context.hitIndex < 2) context.hitIndex = context.hitIndex+1
       else context.final = true
     }
     else if (userSays('reset')) resetContextForUser();
