@@ -40,7 +40,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       try {
         const payload = JSON.parse(messagingEvent.postback.payload)
         return payload
-      } catch(err) {
+      } catch (err) {
         return {}
       }
     }
@@ -74,8 +74,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
     const greet = () => {
       return newMessage()
-        .then(addText('Hi there!'))
-        .then(addQuickReplies(['Let\'s start!']))
+        .then(addText("Hey human! It's me, LunchBob! My job is to help you take the weight off your shoulders when deciding the place to have lunch each day. Can I be of your assistance?"))
+        .then(addQuickReplies(['Yes please!']))
         .then(sendMessage);
     };
 
@@ -87,13 +87,9 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
     const askLocation = () => {
       return newMessage()
-        .then(addText('What is your location'))
+        .then(addText("Let's begin by figuring out your location so I can find lunch places close to you."))
         .then(sendMessage)
         .then(newMessage)
-        .then(addGenericTemplate([{
-          title: 'Share location',
-          subtitle: 'Pro tip: You can also write the starting point if it\'s not your current location'
-        }]))
         .then(addShareLocation())
         .then(sendMessage);
     };
@@ -104,8 +100,9 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         .then(results => {
           context.results = results
           return newMessage()
-            .then(addText(`I found ${results.total} places in 1km distance from you. How would you like to proceed?`))
-            .then(addQuickReplies(['Hit me with random 3']))
+            .then(addText(`Awesome! I just found ${results.total} places that server lunch within 1,0km from your location.`))
+            .then(addText(`So far I can only give you some random recommendations.`))
+            .then(addQuickReplies(['Just hit me up!']))
             .then(sendMessage)
         })
     }
@@ -116,7 +113,7 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       let start = context.hitIndex * 3
       let end = start + 3
 
-      if(end >= restaurants.length) {
+      if (end >= restaurants.length) {
         start = restaurants.length - 3
         end = restaurants.length
       }
@@ -138,10 +135,10 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         item_url: restaurant.url
       }
 
-      if(allowSelect) {
+      if (allowSelect) {
         card.buttons = [{
           type: 'postback',
-          title: 'This is it!',
+          title: '(y)',
           payload: JSON.stringify(payload)
         }]
       }
@@ -154,11 +151,11 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       const restaurantSet = restaurantSetFor(context)
 
       return newMessage()
-        .then(addText('Sure. Here are three restaurants that you might wanna try'))
+        .then(addText('Sure. Here are three recommendations for you:'))
         .then(sendMessage)
         .then(newMessage)
         .then(addGenericTemplate(restaurantSet))
-        .then(addQuickReplies(['Nope, hit 3 more']))
+        .then(addQuickReplies(['Nope, hit 3 more!']))
         .then(sendMessage)
         .catch(console.log)
     }
@@ -168,22 +165,21 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       const restaurant = mapRestaurant(context.selected, false)
       const message = newMessage()
 
-      if(context.final) {
+      if (context.final) {
         message
-          .then(addText('Come on dude, time to eat! Here is your place:'))
+          .then(addText('Come on dude, I took the liberty to choose!'))
       }
       else {
         message
-          .then(addText('Great! Here is a recap of your place:'))
+          .then(addText('Awesome! Hope you enjoy!'))
       }
+      message
+        .then(addText('Protip: You can invite friends using the share button next to the card.'))
 
       return message
         .then(sendMessage)
         .then(newMessage)
         .then(addGenericTemplate([restaurant]))
-        .then(sendMessage)
-        .then(newMessage)
-        .then(addText('Hope this helps! Just call me when you want great recommendations again!'))
         .then(sendMessage)
         .catch(console.log)
     }
@@ -192,19 +188,19 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
     if (userSays('hi', 'hello', 'get started', 'help', 'Get started')) {
       Object.keys(context).forEach(key => delete context[key]);
-      context.greeted = true;
+      context.started = true;
     }
-    else if (userSays('Let\'s start!', 'Start')) context.started = true;
+    else if (userSays('Yes please!')) context.greeted = true;
     else if (userSharesLocation()) context.location = getUserMessage();
-    else if (userSays('Hit me with random 3')) context.hitIndex = 0
-    else if (userSays('Nope, hit 3 more')) {
-      if(context.hitIndex < 2) context.hitIndex = context.hitIndex+1
+    else if (userSays('Just hit me up!')) context.hitIndex = 0
+    else if (userSays('Nope, hit 3 more!')) {
+      if (context.hitIndex < 2) context.hitIndex = context.hitIndex + 1
       else {
-        context.selected = context.results.restaurants[context.results.restaurants.length -1]
+        context.selected = context.results.restaurants[context.results.restaurants.length - 1]
         context.final = true
       }
     }
-    else if(matchJsonPayload(payload => payload.type === 'RESTAURANT_SELECT')) {
+    else if (matchJsonPayload(payload => payload.type === 'RESTAURANT_SELECT')) {
       const id = jsonPayload().id
       context.selected = context.results.restaurants.find(restaurant => restaurant.id === id)
     }
@@ -213,8 +209,8 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
 
     console.log('Context', context)
 
-    if (context.greeted && !context.started) return greet();
-    else if (context.started && !context.location) return askLocation()
+    if (context.started && !context.greeted) return greet();
+    else if (context.greeted && !context.location) return askLocation()
     else if (context.location && !context.results) return loadPlaces(context)
     else if (context.results && context.hitIndex != null && !context.selected) return showRestaurants(context)
     else if (context.selected) showRestaurant(context)
