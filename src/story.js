@@ -128,9 +128,9 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
       }
 
       const keywords = restaurant.categories.map(category => category[0]).join(", ")
-      const distance = restaurant.location.coordinate ? calcDistance(context.location, restaurant.location.coordinate) : ""
+      const distance = restaurant.location.coordinate ? calculateDistance(context.location, restaurant.location.coordinate) : ""
 
-      const subtitle = `Style:${keywords}\n\nRating: ${restaurant.rating}\nDistance: ${distance}`
+      const subtitle = `Style: ${keywords}\n\nRating: ${restaurant.rating}\nDistance: ${distance}m`
 
       const card = {
         title: restaurant.name,
@@ -151,7 +151,25 @@ export default function storyRunner(sendMessage, searchRestaurants, getContextFo
     }
 
     const calculateDistance = (location, restaurantLocation) => {
+      return getDistanceFromLatLonInKm(location.lat, location.long, restaurantLocation.latitude, restaurantLocation.longitude)
+    }
 
+    const getDistanceFromLatLonInKm = (lat1,lon1,lat2,lon2) => {
+      var R = 6371000; // Radius of the earth in km
+      var dLat = degrad(lat2-lat1);  // deg2rad below
+      var dLon = degrad(lon2-lon1);
+      var a =
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(degrad(lat1)) * Math.cos(degrad(lat2)) *
+          Math.sin(dLon/2) * Math.sin(dLon/2)
+        ;
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      var d = Math.round(R * c); // Distance in km
+      return d;
+    }
+
+    const degrad = (deg) => {
+      return deg * (Math.PI/180)
     }
 
     const processImageUrl = url => url.substring(0, url.length - 6) + 'l.jpg'
