@@ -114,12 +114,12 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
       const restaurantSet = restaurantSetFor(context)
 
       return newMessage()
-        .then(addText('Sure. Here is three restaurants that you might wanna try'))
+        .then(addText('Sure. Here are three restaurants that you might wanna try'))
         .then(sendMessage)
         .then(newMessage)
         .then(addGenericTemplate(restaurantSet))
         .then(res => {
-          console.log(res)
+          console.log(JSON.stringify(res))
           return res
         })
         .then(sendMessage)
