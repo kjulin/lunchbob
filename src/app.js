@@ -38,14 +38,13 @@ export default (configuration, logRequests) => {
   })
 
   app.post('/webhook', (req, res) => {
+    res.sendStatus(200)
     if (req.body.entry) {
       req.body.entry.map(pageEntry => pageEntry.messaging)
         .reduce((a, b) => a.concat(b), [])
         .filter(messagingEvent => messagingEvent.message || messagingEvent.postback)
         .forEach(messagingEvent => runStory(messagingEvent))
     }
-
-    res.sendStatus(200)
   })
 
   return app
