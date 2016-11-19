@@ -107,17 +107,15 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
         })
     }
 
-    const randomIndex = array => {
-      return parseInt(Math.random() * array.length)
+    const randomIndex = max => {
+      return parseInt(Math.random() * max)
     }
 
     const restaurantSetFor = context => {
 
-      const restaurants = context.results.restaurants
-      const indexes = Array(3).fill(null).map(_ => randomIndex(restaurants))
-      const selected = indexes.map(index => restaurants[index])
+      const indexes = Array(3).fill(null).map(_ => randomIndex(context.results.restaurants.length))
+      const selected = indexes.map(index => context.results.restaurants[index])
       indexes.map(index => context.results.restaurants.splice(index, 1))
-
 
       const items = selected.map(restaurant => mapRestaurant(restaurant, true))
       return items;

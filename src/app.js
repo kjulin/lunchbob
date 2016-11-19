@@ -16,8 +16,6 @@ export default (configuration, logRequests) => {
   const app = express()
   app.use(bodyParser.json())
 
-  searchRestaurants(60.1663803,24.9233812).then(console.log)
-
   const runStory = storyRunner(fbApi.sendMessage)
 
   if (logRequests) {
