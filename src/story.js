@@ -136,6 +136,6 @@ export default function storyRunner(sendMessage, getContextForUser = getSession,
     if (context.greeted && !context.started) return greet();
     else if (context.started && !context.location) return askLocation()
     else if (context.location && !context.results) return loadPlaces(context)
-    else if (context.results && context.hitIndex) return showRestaurants(context)
+    else if (context.results && context.hitIndex != null) return showRestaurants(context)
   };
 }
