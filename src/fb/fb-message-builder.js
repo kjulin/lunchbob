@@ -10,9 +10,9 @@ export default configuration => {
         id: userId,
       },
       message: {}
-    };
-    return Promise.resolve(message);
-  };
+    }
+    return Promise.resolve(message)
+  }
 
   const addText = text => addToMessage('text', text);
   const addQuickReplies = quickReplies => addToMessage('quick_replies', quickReplies.map(reply => ({
@@ -48,17 +48,17 @@ export default configuration => {
     payload: {
       url
     }
-  });
+  })
 
   const addToMessage = (propertyName, content) => {
     return reply => {
       if (reply.message[propertyName] && reply.message[propertyName].constructor == Array) {
-        reply.message[propertyName] = [...reply.message[propertyName], ...content];
+        reply.message[propertyName] = [...reply.message[propertyName], ...content]
       } else {
-        reply.message[propertyName] = content;
+        reply.message[propertyName] = content
       }
 
-      return reply;
+      return reply
     };
   };
 

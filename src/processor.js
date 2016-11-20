@@ -44,7 +44,7 @@ const mapRestaurant = (restaurant, location, allowSelect = true) => {
 
   if(restaurantLocation) {
 
-    const url = `https://www.google.com/maps?saddr=${location.lat},${location.long}&daddr=${restaurantLocation.latitude}, ${restaurantLocation.longitude}`
+    const url = `http://maps.apple.com?saddr=${location.lat},${location.long}&daddr=${restaurantLocation.latitude}, ${restaurantLocation.longitude}`
 
     buttons.push({
       type: 'web_url',

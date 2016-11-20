@@ -22,7 +22,7 @@ export default (messageBuilder) => {
       return newMessage()
         .then(messageBuilder.addText("Just say 'lunch' and I'll look for some restaurant for you!"))
         .then(messageBuilder.addQuickReplies(['Lunch']))
-        .then(sendMessage);
+        .then(sendMessage)
     };
 
     const askLocation = (change = false) => {
@@ -190,7 +190,7 @@ export default (messageBuilder) => {
     }
 
     if (context == null) return unknownCommand()
-    else if (context.started && !context.greeted) return greet();
+    else if (context.started && !context.greeted) return greet()
     else if (context.greeted && !context.location) return askLocation(context.changeLocation)
     else if (context.location && !context.session) return introReady(context)
     else if (context.session && context.session.cuisine === 'select') return selectCuisine()
