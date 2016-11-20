@@ -39,13 +39,29 @@ const mapRestaurant = (restaurant, location, allowSelect = true) => {
     item_url: restaurant.url
   }
 
+  const buttons = []
+  const restaurantLocation = restaurant.location.coordinate
+
+  if(restaurantLocation) {
+
+    const url = `https://www.google.com/maps?saddr=${location.lat},${location.long}&daddr=${restaurantLocation.latitude}, ${restaurantLocation.longitude}`
+
+    buttons.push({
+      type: 'web_url',
+      url,
+      title: 'Get directions'
+    })
+  }
+
   if (allowSelect) {
-    card.buttons = [{
+    buttons.push({
       type: 'postback',
       title: '\uD83D\uDC4D',
       payload: JSON.stringify(payload)
-    }]
+    })
   }
+
+  if(buttons.length > 0) card.buttons = buttons
 
   return card
 }

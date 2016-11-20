@@ -21,6 +21,7 @@ export default (messageBuilder) => {
     const unknownCommand = () => {
       return newMessage()
         .then(messageBuilder.addText("Just say 'lunch' and I'll look for some restaurant for you!"))
+        .then(messageBuilder.addQuickReplies(['Lunch']))
         .then(sendMessage);
     };
 
@@ -179,7 +180,7 @@ export default (messageBuilder) => {
             buttons: [{
               type: 'postback',
               title: 'I prefer random',
-              payload: 'show me more'
+              payload: 'lunch'
             }]
           }
         ]))
