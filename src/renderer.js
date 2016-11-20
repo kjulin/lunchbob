@@ -77,7 +77,7 @@ export default (messageBuilder) => {
         context.session.nextSet.push({
           title: 'Not impressed?',
           subtitle: 'I can give you more recommendations..',
-          image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/notimpressed.gif',
+          image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/notimpressed.png',
           buttons: [{
             type: 'postback',
             title: 'Show me more',
@@ -180,7 +180,7 @@ export default (messageBuilder) => {
             subtitle: 'Damn, how difficult it is to decide a lunch place?',
             buttons: [{
               type: 'postback',
-              image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/notimpressed.gif',
+              image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/notimpressed.png',
               title: 'I prefer random',
               payload: 'lunch'
             }]
