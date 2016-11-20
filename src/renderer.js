@@ -13,14 +13,14 @@ export default (messageBuilder) => {
         }]))
         .then(sendMessage)
         .then(newMessage)
-        .then(messageBuilder.addText('My job is to help you take the weight off your shoulders when deciding the place to have lunch each day. Let\'s begin, shall we?'))
+        .then(messageBuilder.addText('I will help you find a place to have lunch each day. Let\'s begin, shall we?'))
         .then(messageBuilder.addQuickReplies(['Yes please!']))
         .then(sendMessage)
     };
 
     const unknownCommand = () => {
       return newMessage()
-        .then(messageBuilder.addText("Just say 'lunch' and I'll look for some restaurant for you!"))
+        .then(messageBuilder.addText("Start by 'lunch' and I'll find for some restaurants for you!"))
         .then(messageBuilder.addQuickReplies(['Lunch']))
         .then(sendMessage)
     };
@@ -29,8 +29,8 @@ export default (messageBuilder) => {
 
       let message = newMessage()
 
-      if (!change) message = message.then(messageBuilder.addText("Let's begin by figuring out your location so I can find lunch places close to you."))
-      else message = message.then(messageBuilder.addText("OK, just share your new location.\nProtip: your can move pin on the map to select other than current location."))
+      if (!change) message = message.then(messageBuilder.addText("Let’s start by setting your location so I can find good lunch places around you. Protip: Move around in the map to give another location."))
+      else message = message.then(messageBuilder.addText("OK, just share your new location.\nProtip: Move around in the map to give another location."))
 
       return message
         .then(messageBuilder.addShareLocation())
@@ -39,7 +39,7 @@ export default (messageBuilder) => {
 
     const introReady = () => {
       return newMessage()
-        .then(messageBuilder.addText("Awesome! I will use this as your home location. You can change it any time from menu. Now, let's have some lunch, shall we?"))
+        .then(messageBuilder.addText("Awesome! I will use this as your home location. You can change it any time from menu. Now, let's find you lunch, shall we?"))
         .then(messageBuilder.addQuickReplies(['Sure, hit me up!']))
         .then(sendMessage)
     }
@@ -60,14 +60,14 @@ export default (messageBuilder) => {
       else if(context.session.hitIndex == 0 && count == 0) {
         message = message
           .then(messageBuilder.addText(`Damn, there seems to be no restaurants near you that would serve ${type}.`))
-          .then(messageBuilder.addQuickReplies(['Start over', 'Select cuisine']))
+          .then(messageBuilder.addQuickReplies(['Start over', 'Select category']))
           .then(sendMessage)
           .then(newMessage)
       }
       else if(count == 0) {
         message = message
           .then(messageBuilder.addText(`Unfortunately I have no more recommendations for you. Maybe you should try again?`))
-          .then(messageBuilder.addQuickReplies(['Try again', 'Select cuisine']))
+          .then(messageBuilder.addQuickReplies(['Try again', 'Select category']))
           .then(sendMessage)
           .then(newMessage)
       }
@@ -85,8 +85,8 @@ export default (messageBuilder) => {
           },
             {
               type: 'postback',
-              title: 'Select cuisine',
-              payload: 'select cuisine'
+              title: 'Select category',
+              payload: 'select category'
             }]
         })
 
@@ -131,7 +131,7 @@ export default (messageBuilder) => {
     const selectCuisine = () => {
 
       return newMessage()
-        .then(messageBuilder.addText('Right, so you want some specific cuisine. How about one of these?'))
+        .then(messageBuilder.addText('Right, so you feel like having a specific cuisine. How about one of these?'))
         .then(sendMessage)
         .then(newMessage)
         .then(messageBuilder.addGenericTemplate([

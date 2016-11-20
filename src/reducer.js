@@ -51,7 +51,7 @@ export default configuration => {
         context.session.hitIndex = 0
         return loadPlaces(context).then(showNextSet)
       }
-      else if (incomingMessage.userSays('select cuisine')) {
+      else if (incomingMessage.userSays('select category')) {
         context.session = {}
         context.session.cuisine = 'select'
       }
