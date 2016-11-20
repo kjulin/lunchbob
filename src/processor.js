@@ -50,7 +50,10 @@ const mapRestaurant = (restaurant, location, allowSelect = true) => {
   return card
 }
 
-const processImageUrl = url => url.substring(0, url.length - 6) + 'l.jpg'
+const processImageUrl = url => {
+  if(url) return url.substring(0, url.length - 6) + 'l.jpg'
+  else return null
+}
 
 const pickRandom = array => {
   const index = parseInt(Math.random() * array.length)

@@ -16,6 +16,9 @@ export default function dispatcher(contextStore, reducer, renderer, parseMessage
         if(log) console.log("Rendering:", saved)
         renderer(saved, incomingMessage.userId())
       })
-      .catch(console.log)
+      .catch(error => {
+        console.log("Dispatch failed!")
+        console.log(error.stack)
+      })
   };
 }

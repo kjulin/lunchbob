@@ -23,10 +23,14 @@ module.exports = configuration => {
 
   const api = {}
 
-  api.searchRestaurants = (lat, lon) => {
+  api.searchRestaurants = (lat, lon, cuisine) => {
+
+    let url = `${API_URL}?ll=${lat},${lon}&radius_filter=1000&limit=20&term=lunch`
+
+    if(cuisine) url = url + `, ${cuisine}`
 
     const request = {
-      url: `${API_URL}?term=lunch&ll=${lat},${lon}&radius_filter=1000&limit=20`,
+      url,
       method: 'GET'
     }
 
@@ -44,7 +48,14 @@ module.exports = configuration => {
           restaurants: res.businesses
         }
       })
-      .catch(console.log)
+      .then(res => {
+        console.log(res)
+        return res
+      })
+      .catch(error => {
+        console.log("Yelp fetch failed")
+        console.log(error.stack)
+      })
   }
 
   return api

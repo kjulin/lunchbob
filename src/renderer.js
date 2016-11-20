@@ -28,7 +28,7 @@ export default (messageBuilder) => {
 
       let message = newMessage()
 
-      if(!change) message = message.then(messageBuilder.addText("Let's begin by figuring out your location so I can find lunch places close to you."))
+      if (!change) message = message.then(messageBuilder.addText("Let's begin by figuring out your location so I can find lunch places close to you."))
       else message = message.then(messageBuilder.addText("OK, just share your new location.\nProtip: your can move pin on the map to select other than current location."))
 
       return message
@@ -47,30 +47,62 @@ export default (messageBuilder) => {
 
       let message = newMessage()
 
-      if(context.session.hitIndex == 0) {
+      const type = context.session.cuisine || 'lunch'
+      const count = context.session.nextSet.length
+
+      if (context.session.hitIndex == 0 && count > 0) {
         message = message
-          .then(messageBuilder.addText(`Awesome! I just found ${context.session.results.total} places that serve lunch within 1,0km from your location.`))
+          .then(messageBuilder.addText(`Awesome! I just found ${context.session.results.total} places that serve ${type} within 1,0km from your location.`))
+          .then(sendMessage)
+          .then(newMessage)
+      }
+      else if(context.session.hitIndex == 0 && count == 0) {
+        message = message
+          .then(messageBuilder.addText(`Damn, there seems to be no restaurants near you that would serve ${type}.`))
+          .then(messageBuilder.addQuickReplies(['Start over', 'Select cuisine']))
+          .then(sendMessage)
+          .then(newMessage)
+      }
+      else if(count == 0) {
+        message = message
+          .then(messageBuilder.addText(`Unfortunately I have no more recommendations for you. Maybe you should try again?`))
+          .then(messageBuilder.addQuickReplies(['Try again', 'Select cuisine']))
           .then(sendMessage)
           .then(newMessage)
       }
 
-      context.session.nextSet.push({
-        title: 'Not impressed?',
-        subtitle: 'I can give you more recommendations..',
-        buttons: [{
-          type: 'postback',
-          title: 'Show me more',
-          payload: 'Show me more'
-        }]
-      })
+      if(count > 0) {
 
-      return message
-        .then(messageBuilder.addText('Here are three recommendations for you:'))
-        .then(sendMessage)
-        .then(newMessage)
-        .then(messageBuilder.addGenericTemplate(context.session.nextSet))
-        .then(sendMessage)
-        .catch(console.log)
+        context.session.nextSet.push({
+          title: 'Not impressed?',
+          subtitle: 'I can give you more recommendations..',
+          buttons: [{
+            type: 'postback',
+            title: 'Show me more',
+            payload: 'show me more'
+          },
+            {
+              type: 'postback',
+              title: 'Select cuisine',
+              payload: 'select cuisine'
+            }]
+        })
+
+        message = message
+          .then(messageBuilder.addText(`Here are some recommendations to eat ${type}:`))
+          .then(sendMessage)
+          .then(newMessage)
+          .then(messageBuilder.addGenericTemplate(context.session.nextSet))
+          .then(sendMessage)
+          .catch(console.log)
+
+        if(count < 3) {
+          message = message
+            .then(newMessage)
+            .then(messageBuilder.addText('These are the last recommendations I have.'))
+        }
+      }
+      else return message
     }
 
     const showRestaurant = (context) => {
@@ -94,10 +126,71 @@ export default (messageBuilder) => {
         .catch(console.log)
     }
 
+    const selectCuisine = () => {
+
+      return newMessage()
+        .then(messageBuilder.addText('Right, so you want some specific cuisine. How about one of these?'))
+        .then(sendMessage)
+        .then(newMessage)
+        .then(messageBuilder.addGenericTemplate([
+          {
+            title: 'Buffet',
+            subtitle: 'I\'m so hungry I could eat a water buffalo.',
+            image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/buffet.png',
+            buttons: [{
+              type: 'postback',
+              title: 'This is it!',
+              payload: 'buffets'
+            }]
+          },
+          {
+            title: 'Burgers',
+            subtitle: 'Nothing beats a good burger.',
+            image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/burgers.png',
+            buttons: [{
+              type: 'postback',
+              title: 'This is it!',
+              payload: 'burgers'
+            }]
+          },
+          {
+            title: 'Salad',
+            subtitle: 'Today I eat healthy.',
+            image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/salads.png',
+            buttons: [{
+              type: 'postback',
+              title: 'This is it!',
+              payload: 'salad'
+            }]
+          },
+          {
+            title: 'Sushi',
+            subtitle: 'Some grilled salmon nigiris, please.',
+            image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/sushi.png',
+            buttons: [{
+              type: 'postback',
+              title: 'This is it!',
+              payload: 'sushi'
+            }]
+          },
+          {
+            title: 'Still not impressed?',
+            subtitle: 'Damn, how difficult it is to decide a lunch place?',
+            buttons: [{
+              type: 'postback',
+              title: 'I prefer random',
+              payload: 'show me more'
+            }]
+          }
+        ]))
+        .then(sendMessage)
+    }
+
     if (context == null) return unknownCommand()
     else if (context.started && !context.greeted) return greet();
     else if (context.greeted && !context.location) return askLocation(context.changeLocation)
     else if (context.location && !context.session) return introReady(context)
+    else if (context.session && context.session.cuisine === 'select') return selectCuisine()
     else if (context.session && !context.session.selected) return showRestaurants(context)
     else if (context.session && context.session.selected) showRestaurant(context)
   }
