@@ -178,9 +178,9 @@ export default (messageBuilder) => {
           {
             title: 'Still not impressed?',
             subtitle: 'Damn, how difficult it is to decide a lunch place?',
+            image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/notimpressed.png',
             buttons: [{
               type: 'postback',
-              image_url: 'https://s3-eu-west-1.amazonaws.com/lunchbob/notimpressed.png',
               title: 'I prefer random',
               payload: 'lunch'
             }]
