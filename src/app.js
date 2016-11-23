@@ -17,21 +17,23 @@ export default (configuration, logRequests) => {
   const contextStore = configureContextStore(configuration)
 
   const reducer = configureReducer(configuration)
-  const renderer  = configureRenderer(configureFbMessageBuilder(configuration))
+  const renderer = configureRenderer(configureFbMessageBuilder(configuration))
   const dispatch = configureDispatcher(contextStore, reducer, renderer, fbMessageParser)
 
   const app = configureApp(logRequests)
-  app.get('/webhook', verifyChallenge)
+  app.get('/webhook', verifyChallenge(configuration))
   app.post('/webhook', processMessage(dispatch))
 
   return app
 }
 
-const verifyChallenge = (req, res) => {
-  if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === configuration.verification_token) {
-    res.send(req.query['hub.challenge'])
-  } else {
-    res.sendStatus(403)
+const verifyChallenge = configuration => {
+  return (req, res) => {
+    if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === configuration.verification_token) {
+      res.send(req.query['hub.challenge'])
+    } else {
+      res.sendStatus(403)
+    }
   }
 }
 

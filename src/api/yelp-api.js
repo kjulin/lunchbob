@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import OAuth from 'oauth-1.0a'
+import shuffle from 'shuffle-array'
 
 const API_URL = `https://api.yelp.com/v2/search/`
 
@@ -23,12 +24,14 @@ module.exports = configuration => {
 
   const api = {}
 
-  api.searchRestaurants = (lat, lon, cuisine) => {
+  const mapResult = result => {
+    return {
+      total: result.total,
+      restaurants: result.businesses
+    }
+  }
 
-    let url = `${API_URL}?ll=${lat},${lon}&radius_filter=1000&limit=20&term=lunch`
-
-    if(cuisine) url = url + `, ${cuisine}`
-
+  const loadForUrl = url => {
     const request = {
       url,
       method: 'GET'
@@ -41,20 +44,45 @@ module.exports = configuration => {
       method: 'GET',
       headers
     })
-      .then(res => res.json())
       .then(res => {
-        return {
-          total: res.total,
-          restaurants: res.businesses
-        }
-      })
-      .then(res => {
-        console.log(res)
-        return res
+        if (res.status == 200) return res.json().then(mapResult)
+        else return {total: 0, restaurants: []}
       })
       .catch(error => {
         console.log("Yelp fetch failed")
         console.log(error.stack)
+      })
+  }
+
+  api.searchRestaurants = (lat, lon, cuisine) => {
+
+    const url = (offset = 0) => {
+      let url = `${API_URL}?ll=${lat},${lon}&radius_filter=1000&limit=20&offset=${offset}&term=lunch`
+
+      if (cuisine) url = url + `, ${cuisine}`
+
+      return url
+    }
+
+    const urls = [url(0), url(20), url(40)]
+
+    return Promise.all(urls.map(loadForUrl))
+      .then(results => {
+        return results.reduce((combined, next) => {
+          return {
+            total: combined.total || next.total,
+            restaurants: combined.restaurants.concat(next.restaurants)
+          }
+        }, {total: null, restaurants: []})
+      })
+      .then(results => {
+        results.restaurants = results.restaurants.filter(restaurant => !restaurant.is_closed)
+        results.restaurants = shuffle(results.restaurants)
+        return results
+      })
+      .then(shuffledResults => {
+        if(shuffledResults.length > 10) return shuffledResults.slice(0, 10)
+        else return shuffledResults
       })
   }
 
